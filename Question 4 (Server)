@@ -1,0 +1,36 @@
+import socket
+import threading
+import random
+
+# List of quotes
+quotes = [
+    "You know, a heart can be broken, but it keeps on beeting, just the same. - Fannie Flagg>
+    "The best thing about the worst time of your life is that you get to see the true colors>
+    "I don't want to get attached to anyone anymore, it only destroys me in the end",
+    "Don't get upset when someone starts putting you down. They're only doing it because the>
+    "Sleep is the only way to stop feeling upset. Sometimes I can't sleep during the day. I'>
+    "You know that feeling when you are so hurt and upset you just wanna punch the wall and >
+]
+
+# Function to handle client requests
+def handle_client(client_socket):
+    random_quote = random.choice(quotes)
+    client_socket.send(random_quote.encode('utf-8'))
+    client_socket.close()
+
+# Main function to run the server
+def main():
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(('192.168.74.129', 8888))
+    server_socket.listen(5)
+
+    print("Quote of the Day (QOTD) Server is listening on port 8888...")
+
+    while True:
+        client_socket, addr = server_socket.accept()
+        print(f"Connection from {addr[0]}:{addr[1]}")
+        client_handler = threading.Thread(target=handle_client, args=(client_socket,))
+        client_handler.start()
+
+if __name__ == "__main__":
+    main()
